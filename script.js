@@ -15,8 +15,11 @@ const events = [
 ];
 
 const container = document.getElementById('events-container');
+const metricsContainer = document.getElementById('metrics-container');
 const firstDay = new Date("2025-08-11");
+const lastDay = new Date("2026-05-27");
 
+// --- CREATE EVENT CHIPS ---
 function createEventChip(event) {
   const chip = document.createElement('div');
   chip.className = `event-chip ${event.type}`;
@@ -43,24 +46,16 @@ function createEventChip(event) {
     const now = new Date();
     let target = event.date ? new Date(event.date) : new Date(event.start);
 
-    // Countdown text
     const timeLeft = target - now;
-    if (timeLeft > 0) {
-      countdown.textContent = formatTime(timeLeft);
-    } else if (event.end && now >= new Date(event.start) && now <= new Date(event.end)) {
-      countdown.textContent = "Ongoing!";
-    } else {
-      countdown.textContent = "Happening now!";
-    }
+    if (timeLeft > 0) countdown.textContent = formatTime(timeLeft);
+    else if (event.end && now >= new Date(event.start) && now <= new Date(event.end)) countdown.textContent = "Ongoing!";
+    else countdown.textContent = "Happening now!";
 
-    // Progress: visible even for far events
+    // Progress: visible
     const totalDuration = target - firstDay;
     const elapsed = now - firstDay;
     let percent = (elapsed / totalDuration) * 100;
-
-    // Ensure progress is at least 5% if in future
     if (percent < 5 && now < target) percent = 5;
-
     percent = Math.min(Math.max(percent, 0), 100);
     progress.style.width = percent + "%";
   }
@@ -69,6 +64,28 @@ function createEventChip(event) {
   setInterval(updateCountdown, 1000);
 }
 
+// --- METRICS ---
+function updateMetrics() {
+  const now = new Date();
+  const totalSchoolDays = Math.ceil((lastDay - firstDay) / (1000 * 3600 * 24));
+  const daysSinceStart = Math.ceil((now - firstDay) / (1000 * 3600 * 24));
+  const schoolProgressPercent = Math.min(Math.max((daysSinceStart / totalSchoolDays) * 100, 0), 100);
+
+  const upcomingEvents = events.filter(ev => {
+    const evDate = ev.date ? new Date(ev.date) : new Date(ev.start);
+    return evDate > now;
+  }).sort((a,b) => new Date(a.date || a.start) - new Date(b.date || b.start));
+
+  metricsContainer.innerHTML = `
+    <div class="metric">Days since start: ${daysSinceStart}</div>
+    <div class="metric">Total school days: ${totalSchoolDays}</div>
+    <div class="metric">School year completed: ${schoolProgressPercent.toFixed(1)}%</div>
+    <div class="metric">Events left: ${upcomingEvents.length}</div>
+    <div class="metric">Next event: ${upcomingEvents[0] ? upcomingEvents[0].name : 'None'}</div>
+  `;
+}
+
+// --- FORMAT TIME ---
 function formatTime(ms) {
   const totalSeconds = Math.floor(ms / 1000);
   const days = Math.floor(totalSeconds / (3600*24));
@@ -78,5 +95,7 @@ function formatTime(ms) {
   return `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
-// Initialize all events
+// --- INITIALIZE ---
 events.forEach(createEventChip);
+updateMetrics();
+setInterval(updateMetrics, 1000);

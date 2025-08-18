@@ -1,27 +1,37 @@
 body {
   font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   background: #f5f5f5;
   margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
 }
 
-.countdown {
-  text-align: center;
-  background: white;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+.container {
+  max-width: 800px;
+  width: 100%;
 }
 
 h1 {
-  margin-bottom: 20px;
+  text-align: center;
+  margin-bottom: 30px;
 }
 
-#timer {
-  font-size: 2em;
+.event {
+  background: white;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.event h2 {
+  margin: 0 0 10px;
+  font-size: 1.2em;
+}
+
+.countdown {
+  font-size: 1.1em;
   font-weight: bold;
   color: #333;
 }

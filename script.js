@@ -43,22 +43,29 @@ function createEventChip(event) {
   container.appendChild(chip);
 
   function updateCountdown() {
-    const now = new Date();
-    let target = event.date ? new Date(event.date) : new Date(event.start);
+  const now = new Date();
+  let targetStart = event.date ? new Date(event.date) : new Date(event.start);
+  let targetEnd = event.end ? new Date(event.end) : targetStart; // single-day events end same day
 
-    const timeLeft = target - now;
-    if (timeLeft > 0) countdown.textContent = formatTime(timeLeft);
-    else if (event.end && now >= new Date(event.start) && now <= new Date(event.end)) countdown.textContent = "Ongoing!";
-    else countdown.textContent = "Happening now!";
-
-    // Progress: visible
-    const totalDuration = target - firstDay;
-    const elapsed = now - firstDay;
-    let percent = (elapsed / totalDuration) * 100;
-    if (percent < 5 && now < target) percent = 5;
-    percent = Math.min(Math.max(percent, 0), 100);
-    progress.style.width = percent + "%";
+  if (now < targetStart) {
+    // Event in future
+    countdown.textContent = formatTime(targetStart - now);
+  } else if (now >= targetStart && now <= targetEnd) {
+    // Event ongoing
+    countdown.textContent = "Ongoing!";
+  } else {
+    // Event finished
+    countdown.textContent = "Finished!";
   }
+
+  // Progress (visible even for far events)
+  const totalDuration = targetStart - firstDay;
+  const elapsed = now - firstDay;
+  let percent = (elapsed / totalDuration) * 100;
+  if (percent < 5 && now < targetStart) percent = 5;
+  percent = Math.min(Math.max(percent, 0), 100);
+  progress.style.width = percent + "%";
+}
 
   updateCountdown();
   setInterval(updateCountdown, 1000);

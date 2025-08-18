@@ -15,7 +15,6 @@ const events = [
 ];
 
 const container = document.getElementById('events-container');
-
 const firstDay = new Date("2025-08-11");
 
 function createEventChip(event) {
@@ -38,33 +37,44 @@ function createEventChip(event) {
   chip.appendChild(name);
   chip.appendChild(countdown);
   chip.appendChild(progressBar);
-
   container.appendChild(chip);
 
   function updateCountdown() {
     const now = new Date();
-    const target = event.date ? new Date(event.date) : new Date(event.start);
-    
+    let target;
+
+    if (event.date) {
+      target = new Date(event.date);
+    } else if (event.start) {
+      target = new Date(event.start);
+    }
+
     // Countdown text
     const timeLeft = target - now;
-    countdown.textContent = timeLeft > 0 ? formatTime(timeLeft) : "Happening now!";
+    if (timeLeft > 0) {
+      countdown.textContent = formatTime(timeLeft);
+    } else if (event.end && now >= new Date(event.start) && now <= new Date(event.end)) {
+      countdown.textContent = "Ongoing!";
+    } else {
+      countdown.textContent = "Happening now!";
+    }
 
-    // Progress from first day to event
+    // Progress from first day to event start
     const totalDuration = target - firstDay;
     const elapsed = now - firstDay;
-    const percent = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+    let percent = (elapsed / totalDuration) * 100;
+    percent = Math.min(Math.max(percent, 0), 100); // clamp between 0-100
     progress.style.width = percent + "%";
   }
 
+  updateCountdown(); // initial call
   setInterval(updateCountdown, 1000);
-  updateCountdown();
 }
-
 
 function formatTime(ms) {
   const totalSeconds = Math.floor(ms / 1000);
-  const days = Math.floor(totalSeconds / (3600*24));
-  const hours = Math.floor((totalSeconds % (3600*24)) / 3600);
+  const days = Math.floor(totalSeconds / (3600 * 24));
+  const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
   return `${days}d ${hours}h ${minutes}m ${seconds}s`;

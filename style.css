@@ -1,8 +1,7 @@
-/* Global styling */
 body {
   font-family: Arial, sans-serif;
-  margin: 0;
   background: #f4f6f8;
+  margin: 0;
   color: #333;
 }
 
@@ -10,60 +9,61 @@ header {
   text-align: center;
   background: linear-gradient(135deg, #4a90e2, #357ABD);
   color: white;
-  padding: 1.5rem;
+  padding: 2rem 1rem;
 }
 
 main {
-  max-width: 800px;
+  max-width: 900px;
   margin: 2rem auto;
   padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .event-card {
-  background: white;
-  padding: 1.2rem;
-  margin-bottom: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease;
-}
-.event-card:hover {
-  transform: translateY(-3px);
+  padding: 1.5rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 
 .event-title {
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: bold;
 }
 
 .event-date {
+  font-size: 1rem;
   color: #555;
-  margin: 0.3rem 0 0.6rem;
 }
 
 .countdown {
   font-weight: bold;
-  margin-bottom: 0.6rem;
+  font-size: 1.1rem;
 }
 
 .progress-container {
   background: #e0e0e0;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  height: 14px;
+  height: 20px;
 }
 
 .progress-bar {
-  height: 14px;
+  height: 20px;
   width: 0%;
+  border-radius: 12px;
   transition: width 1s ease;
 }
 
-/* Color coding */
-.school-day { background: #4caf50; }      /* green */
-.holiday { background: #f39c12; }        /* orange */
-.break { background: #e74c3c; }          /* red */
-.final { background: #9b59b6; }          /* purple */
+/* Event color coding */
+.school-day { background: #4caf50; }
+.holiday { background: #f39c12; }
+.break { background: #e74c3c; }
+.final { background: #9b59b6; }
 
 footer {
   text-align: center;

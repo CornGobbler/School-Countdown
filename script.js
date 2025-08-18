@@ -14,7 +14,6 @@ const events = [
   { title: "Last Day of School", date: "2026-05-27", type: "final" },
 ];
 
-// School year boundaries
 const startDate = new Date("2025-08-11");
 const endDate = new Date("2026-05-27");
 
@@ -26,13 +25,11 @@ function createEventCard(event) {
   const card = document.createElement("div");
   card.className = "event-card";
 
-  // Title
   const title = document.createElement("div");
   title.className = "event-title";
   title.textContent = event.title;
   card.appendChild(title);
 
-  // Date(s)
   const dateDiv = document.createElement("div");
   dateDiv.className = "event-date";
   if (event.date) {
@@ -42,7 +39,6 @@ function createEventCard(event) {
   }
   card.appendChild(dateDiv);
 
-  // Countdown
   const now = new Date();
   let eventDate = event.date ? new Date(event.date) : new Date(event.start);
   let daysLeft = daysBetween(now, eventDate);
@@ -51,14 +47,12 @@ function createEventCard(event) {
   countdown.textContent = daysLeft > 0 ? `${daysLeft} days left` : "Ongoing / Passed";
   card.appendChild(countdown);
 
-  // Progress bar
   const progressContainer = document.createElement("div");
   progressContainer.className = "progress-container";
 
   const progressBar = document.createElement("div");
   progressBar.className = `progress-bar ${event.type}`;
 
-  // Progress % relative to school year
   let totalDays = daysBetween(startDate, endDate);
   let elapsed = daysBetween(startDate, eventDate);
   let percent = Math.min(100, Math.max(0, (elapsed / totalDays) * 100));

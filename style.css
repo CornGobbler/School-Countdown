@@ -1,12 +1,16 @@
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f2f5;
+  font-family: 'Arial', sans-serif;
+  background: url('https://3.files.edl.io/5b73/22/12/07/180554-dd7ebcac-35d9-4dcb-a5e2-08f0eadfb919.jpg') no-repeat center center fixed;
+  background-size: cover;
   margin: 0;
   padding: 20px;
+  color: #333;
 }
 
 h1 {
   text-align: center;
+  color: #fff;
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
 }
 
 #events-container {
@@ -14,53 +18,57 @@ h1 {
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .event-chip {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 15px 20px;
+  background-color: rgba(255,255,255,0.9);
+  border-radius: 15px;
+  padding: 20px;
   width: 250px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .event-chip:hover {
   transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
 
 .event-name {
   font-weight: bold;
   margin-bottom: 10px;
+  font-size: 1.1em;
   text-align: center;
 }
 
 .countdown {
-  font-size: 1.1em;
-  margin-bottom: 10px;
+  font-size: 1em;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
 .progress-bar {
   width: 100%;
   background-color: #e0e0e0;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
-  height: 12px;
+  height: 14px;
 }
 
 .progress {
   height: 100%;
   width: 0%;
-  border-radius: 6px;
-  transition: width 0.3s ease;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
+  transition: width 0.5s ease;
 }
 
-/* Color coding examples */
-.first-day { background-color: #ffd700; }
-.holiday { background-color: #87ceeb; }
-.recess { background-color: #90ee90; }
-.last-day { background-color: #ff7f7f; }
+/* Color coding for chip borders (optional) */
+.first-day { border-top: 4px solid #ffd700; }
+.holiday { border-top: 4px solid #87ceeb; }
+.recess { border-top: 4px solid #90ee90; }
+.last-day { border-top: 4px solid #ff7f7f; }

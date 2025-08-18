@@ -41,13 +41,7 @@ function createEventChip(event) {
 
   function updateCountdown() {
     const now = new Date();
-    let target;
-
-    if (event.date) {
-      target = new Date(event.date);
-    } else if (event.start) {
-      target = new Date(event.start);
-    }
+    let target = event.date ? new Date(event.date) : new Date(event.start);
 
     // Countdown text
     const timeLeft = target - now;
@@ -59,22 +53,26 @@ function createEventChip(event) {
       countdown.textContent = "Happening now!";
     }
 
-    // Progress from first day to event start
+    // Progress: visible even for far events
     const totalDuration = target - firstDay;
     const elapsed = now - firstDay;
     let percent = (elapsed / totalDuration) * 100;
-    percent = Math.min(Math.max(percent, 0), 100); // clamp between 0-100
+
+    // Ensure progress is at least 5% if in future
+    if (percent < 5 && now < target) percent = 5;
+
+    percent = Math.min(Math.max(percent, 0), 100);
     progress.style.width = percent + "%";
   }
 
-  updateCountdown(); // initial call
+  updateCountdown();
   setInterval(updateCountdown, 1000);
 }
 
 function formatTime(ms) {
   const totalSeconds = Math.floor(ms / 1000);
-  const days = Math.floor(totalSeconds / (3600 * 24));
-  const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+  const days = Math.floor(totalSeconds / (3600*24));
+  const hours = Math.floor((totalSeconds % (3600*24)) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
   return `${days}d ${hours}h ${minutes}m ${seconds}s`;

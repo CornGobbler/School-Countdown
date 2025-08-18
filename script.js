@@ -1,59 +1,80 @@
-// List of important dates
 const events = [
-  { name: "First Day of School", date: "August 11, 2025 08:00:00" },
-  { name: "Labor Day", date: "September 1, 2025 00:00:00" },
-  { name: "Non-student Day", date: "November 10, 2025 00:00:00" },
-  { name: "Veterans Day", date: "November 11, 2025 00:00:00" },
-  { name: "Thanksgiving Recess", date: "November 24, 2025 00:00:00", end: "November 28, 2025 23:59:59" },
-  { name: "Winter Recess", date: "December 22, 2025 00:00:00", end: "January 2, 2026 23:59:59" },
-  { name: "Non-student Day", date: "January 5, 2026 00:00:00" },
-  { name: "Martin Luther King, Jr. Day", date: "January 19, 2026 00:00:00" },
-  { name: "Lincoln's Birthday", date: "February 13, 2026 00:00:00" },
-  { name: "Presidents Day", date: "February 16, 2026 00:00:00" },
-  { name: "Spring Recess", date: "March 16, 2026 00:00:00", end: "March 20, 2026 23:59:59" },
-  { name: "Memorial Day", date: "May 25, 2026 00:00:00" },
-  { name: "Last Day of School", date: "May 27, 2026 15:15:00" }
+  { title: "First Day of School", date: "2025-08-11", type: "school-day" },
+  { title: "Labor Day", date: "2025-09-01", type: "holiday" },
+  { title: "Non-student Day", date: "2025-11-10", type: "holiday" },
+  { title: "Veterans Day", date: "2025-11-11", type: "holiday" },
+  { title: "Thanksgiving Recess", start: "2025-11-24", end: "2025-11-28", type: "break" },
+  { title: "Winter Recess", start: "2025-12-22", end: "2026-01-02", type: "break" },
+  { title: "Non-student Day", date: "2026-01-05", type: "holiday" },
+  { title: "Martin Luther King, Jr. Day", date: "2026-01-19", type: "holiday" },
+  { title: "Lincoln's Birthday", date: "2026-02-13", type: "holiday" },
+  { title: "Presidents Day", date: "2026-02-16", type: "holiday" },
+  { title: "Spring Recess", start: "2026-03-16", end: "2026-03-20", type: "break" },
+  { title: "Memorial Day", date: "2026-05-25", type: "holiday" },
+  { title: "Last Day of School", date: "2026-05-27", type: "final" },
 ];
 
-// Render event containers
-const eventsContainer = document.getElementById("events");
-events.forEach((event, i) => {
-  const div = document.createElement("div");
-  div.className = "event";
-  div.innerHTML = `
-    <h2>${event.name}</h2>
-    <div class="countdown" id="event-${i}">Loading...</div>
-  `;
-  eventsContainer.appendChild(div);
-});
+// School year boundaries
+const startDate = new Date("2025-08-11");
+const endDate = new Date("2026-05-27");
 
-// Countdown updater
-function updateCountdown() {
-  const now = new Date().getTime();
+function daysBetween(d1, d2) {
+  return Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+}
 
-  events.forEach((event, i) => {
-    const start = new Date(event.date).getTime();
-    const end = event.end ? new Date(event.end).getTime() : null;
-    const el = document.getElementById(`event-${i}`);
+function createEventCard(event) {
+  const card = document.createElement("div");
+  card.className = "event-card";
 
-    if (now < start) {
-      // Countdown to start
-      const diff = start - now;
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  // Title
+  const title = document.createElement("div");
+  title.className = "event-title";
+  title.textContent = event.title;
+  card.appendChild(title);
 
-      el.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-    } else if (end && now <= end) {
-      // During event range
-      el.innerHTML = "📌 Happening Now!";
-    } else {
-      // Passed
-      el.innerHTML = "✅ Event Passed";
-    }
+  // Date(s)
+  const dateDiv = document.createElement("div");
+  dateDiv.className = "event-date";
+  if (event.date) {
+    dateDiv.textContent = new Date(event.date).toDateString();
+  } else {
+    dateDiv.textContent = `${new Date(event.start).toDateString()} → ${new Date(event.end).toDateString()}`;
+  }
+  card.appendChild(dateDiv);
+
+  // Countdown
+  const now = new Date();
+  let eventDate = event.date ? new Date(event.date) : new Date(event.start);
+  let daysLeft = daysBetween(now, eventDate);
+  const countdown = document.createElement("div");
+  countdown.className = "countdown";
+  countdown.textContent = daysLeft > 0 ? `${daysLeft} days left` : "Ongoing / Passed";
+  card.appendChild(countdown);
+
+  // Progress bar
+  const progressContainer = document.createElement("div");
+  progressContainer.className = "progress-container";
+
+  const progressBar = document.createElement("div");
+  progressBar.className = `progress-bar ${event.type}`;
+
+  // Progress % relative to school year
+  let totalDays = daysBetween(startDate, endDate);
+  let elapsed = daysBetween(startDate, eventDate);
+  let percent = Math.min(100, Math.max(0, (elapsed / totalDays) * 100));
+  progressBar.style.width = percent + "%";
+
+  progressContainer.appendChild(progressBar);
+  card.appendChild(progressContainer);
+
+  return card;
+}
+
+function renderCalendar() {
+  const container = document.getElementById("calendar");
+  events.forEach(event => {
+    container.appendChild(createEventCard(event));
   });
 }
 
-setInterval(updateCountdown, 1000);
-updateCountdown();
+renderCalendar();

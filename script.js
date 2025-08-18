@@ -16,6 +16,8 @@ const events = [
 
 const container = document.getElementById('events-container');
 
+const firstDay = new Date("2025-08-11");
+
 function createEventChip(event) {
   const chip = document.createElement('div');
   chip.className = `event-chip ${event.type}`;
@@ -41,35 +43,23 @@ function createEventChip(event) {
 
   function updateCountdown() {
     const now = new Date();
-    let target, start;
+    const target = event.date ? new Date(event.date) : new Date(event.start);
     
-    if(event.date) {
-      target = new Date(event.date);
-      const total = target - now;
-      countdown.textContent = total > 0 ? formatTime(total) : "Happening now!";
-      progress.style.width = total > 0 ? `${Math.min(100, 100 - (total / (target - new Date())) * 100)}%` : `100%`;
-    } else if(event.start && event.end) {
-      start = new Date(event.start);
-      target = new Date(event.end);
-      if(now < start) {
-        const total = start - now;
-        countdown.textContent = formatTime(total) + " until start";
-        progress.style.width = `0%`;
-      } else if(now >= start && now <= target) {
-        const totalDuration = target - start;
-        const elapsed = now - start;
-        countdown.textContent = "Ongoing!";
-        progress.style.width = `${(elapsed / totalDuration) * 100}%`;
-      } else {
-        countdown.textContent = "Finished!";
-        progress.style.width = `100%`;
-      }
-    }
+    // Countdown text
+    const timeLeft = target - now;
+    countdown.textContent = timeLeft > 0 ? formatTime(timeLeft) : "Happening now!";
+
+    // Progress from first day to event
+    const totalDuration = target - firstDay;
+    const elapsed = now - firstDay;
+    const percent = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+    progress.style.width = percent + "%";
   }
 
   setInterval(updateCountdown, 1000);
   updateCountdown();
 }
+
 
 function formatTime(ms) {
   const totalSeconds = Math.floor(ms / 1000);

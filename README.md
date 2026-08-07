@@ -30,7 +30,7 @@ To publish it on GitHub Pages: push the repo, then enable Pages in **Settings �
 
 > **Note:** if you update the files and don't see your changes on the live site, do a hard refresh (`Ctrl+Shift+R` / `Cmd+Shift+R`) — GitHub Pages' CDN and your browser cache can both hang onto the old `script.js`/`style.css` for a bit after a push.
 
-## 🛠 Customizing for your own school
+## Customizing for your own school
 
 Everything about the calendar lives at the top of `script.js` — no need to touch the HTML or CSS to update dates.
 

@@ -73,6 +73,23 @@ function formatRange(start, end) {
 
 function pad(n) { return String(n).padStart(2, "0"); }
 
+function addDays(d, n) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+}
+
+// Inclusive count of Mon–Fri between two dates
+function countWeekdays(a, b) {
+  if (a > b) return 0;
+  let count = 0;
+  let d = new Date(a);
+  while (d <= b) {
+    const wd = d.getDay();
+    if (wd !== 0 && wd !== 6) count++;
+    d = addDays(d, 1);
+  }
+  return count;
+}
+
 /* =========================================================
    NORMALIZE EVENT DATA
 ========================================================= */
@@ -123,11 +140,25 @@ function renderMetrics(now) {
   const daysLabel = daysSinceStart < 0 ? "Days until first day" : "Days since start";
   const daysValue = daysSinceStart < 0 ? Math.abs(daysSinceStart) : daysSinceStart;
 
+  // Weeks remaining until the last day (0 once the year is over)
+  const weeksLeft = todayStart > yearEnd ? 0 : Math.max(Math.ceil((yearEnd - todayStart) / (7 * DAY_MS)), 0);
+
+  // Fun trivia: single-day holidays/non-student days that fall on a Monday or Friday,
+  // stretching a regular weekend into a long one
+  const longWeekends = parsedEvents.filter((e) => {
+    const singleDay = e.start.getTime() === e.end.getTime();
+    const isDayOff = e.category === "holiday" || e.category === "nonstudent";
+    const wd = e.start.getDay();
+    return singleDay && isDayOff && (wd === 1 || wd === 5);
+  }).length;
+
   const metrics = [
     { value: daysValue, label: daysLabel },
     { value: TOTAL_SCHOOL_DAYS, label: "Total school days" },
     { value: `${completedPct}%`, label: "Year completed" },
     { value: eventsLeft, label: "Events left" },
+    { value: weeksLeft, label: "Weeks left" },
+    { value: longWeekends, label: "Long weekends" },
     { value: nextEvent ? nextEvent.title : "None", label: "Next event" },
   ];
 
@@ -140,6 +171,36 @@ function renderMetrics(now) {
       </div>`
     )
     .join("");
+}
+
+/* =========================================================
+   PER-CARD HOVER DETAILS
+========================================================= */
+const WEEKDAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+function buildDetails(now, ev, status) {
+  const lines = [];
+
+  if (ev.start.getTime() === ev.end.getTime()) {
+    const wd = WEEKDAY_NAMES[ev.start.getDay()];
+    lines.push(ev.category === "milestone" ? `Falls on a ${wd}.` : `No school \u2014 falls on a ${wd}.`);
+  } else {
+    const offDays = countWeekdays(ev.start, ev.end);
+    lines.push(`${offDays} school day${offDays === 1 ? "" : "s"} off.`);
+  }
+
+  if (status === "upcoming") {
+    const schoolDaysAway = countWeekdays(addDays(startOfDay(now), 1), ev.start);
+    lines.push(`${schoolDaysAway} school day${schoolDaysAway === 1 ? "" : "s"} from today.`);
+  } else if (status === "ongoing") {
+    const daysLeft = Math.ceil((ev.end - now) / DAY_MS);
+    lines.push(daysLeft <= 0 ? "Wraps up today." : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left.`);
+  } else {
+    const daysAgo = Math.floor((startOfDay(now) - ev.end) / DAY_MS);
+    lines.push(daysAgo <= 0 ? "Just wrapped up." : `That was ${daysAgo} day${daysAgo === 1 ? "" : "s"} ago.`);
+  }
+
+  return lines;
 }
 
 /* =========================================================
@@ -164,6 +225,7 @@ function renderCards(now) {
       }
 
       const showTape = ev.category === "recess" || ev.category === "milestone";
+      const details = buildDetails(now, ev, status);
 
       return `
         <article class="card card--${status}" tabindex="0" aria-label="${ev.title}, ${statusText}">
@@ -173,6 +235,7 @@ function renderCards(now) {
           <p class="card__date">${formatRange(ev.start, ev.end)}</p>
           <span class="card__status">${statusText}</span>
           <div class="card__bar"><div class="card__bar-fill" style="width:${progress}%"></div></div>
+          <div class="card__details">${details.map((line) => `<span>${line}</span>`).join("")}</div>
         </article>`;
     })
     .join("");
@@ -241,3 +304,33 @@ fullRender();
 setInterval(tick, 1000);
 // Re-render metrics/cards once a minute so day-boundary changes stay accurate
 setInterval(fullRender, 60 * 1000);
+
+/* =========================================================
+   THEME TOGGLE (day / night mode)
+========================================================= */
+(function setupThemeToggle() {
+  const toggleBtn = document.getElementById("theme-toggle");
+  const iconEl = document.getElementById("theme-toggle-icon");
+  const root = document.documentElement;
+
+  function applyIcon(theme) {
+    // Icon shows what you'll switch TO
+    iconEl.textContent = theme === "dark" ? "\u2600\uFE0F" : "\uD83C\uDF19";
+    toggleBtn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+    toggleBtn.setAttribute("aria-label", theme === "dark" ? "Switch to day mode" : "Switch to night mode");
+  }
+
+  applyIcon(root.getAttribute("data-theme") || "light");
+
+  toggleBtn.addEventListener("click", () => {
+    const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+    const next = current === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try {
+      localStorage.setItem("schoolCountdownTheme", next);
+    } catch (e) {
+      /* localStorage unavailable — theme just won't persist */
+    }
+    applyIcon(next);
+  });
+})();

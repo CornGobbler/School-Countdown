@@ -262,18 +262,79 @@ function renderCards(now) {
       const showTape = ev.category === "recess" || ev.category === "milestone";
       const details = buildDetails(now, ev, status);
 
+      // Chips for upcoming/ongoing events get a live ticking countdown on hover/focus.
+      // "Ends in" counts to just past midnight on the event's last day; "In" counts to its start.
+      const isLive = status !== "done";
+      const liveTarget = status === "ongoing" ? ev.end.getTime() + DAY_MS : ev.start.getTime();
+      const liveMode = status === "ongoing" ? "ends" : "start";
+      const chipAttrs = isLive
+        ? `data-live="true" data-target="${liveTarget}" data-mode="${liveMode}" tabindex="0"`
+        : "";
+
       return `
         <article class="card card--${status}" tabindex="0" aria-label="${ev.title}, ${statusText}">
           <div class="pin ${pinClass} card__pin" aria-hidden="true"></div>
           ${showTape ? '<div class="card__tape" aria-hidden="true"></div>' : ""}
           <h3 class="card__title">${ev.title}</h3>
           <p class="card__date">${formatRange(ev.start, ev.end)}</p>
-          <span class="card__status">${statusText}</span>
+          <span class="card__status" ${chipAttrs}>${statusText}</span>
           <div class="card__bar"><div class="card__bar-fill" style="width:${progress}%"></div></div>
           <div class="card__details">${details.map((line) => `<span>${line}</span>`).join("")}</div>
         </article>`;
     })
     .join("");
+
+  attachChipCountdowns();
+}
+
+/* =========================================================
+   LIVE COUNTDOWN ON STATUS CHIPS
+   Hovering (or tabbing to) an "In N days" / "Happening now!" chip
+   swaps it into a ticking dd/hh/mm/ss countdown until you leave it.
+========================================================= */
+let activeChipTimers = [];
+
+function attachChipCountdowns() {
+  // clear any timers left over from the previous render
+  activeChipTimers.forEach(clearInterval);
+  activeChipTimers = [];
+
+  document.querySelectorAll('.card__status[data-live="true"]').forEach((chip) => {
+    const target = Number(chip.dataset.target);
+    const mode = chip.dataset.mode;
+    const original = chip.textContent;
+    let intervalId = null;
+
+    function tick() {
+      const diff = Math.max(target - Date.now(), 0);
+      const d = Math.floor(diff / DAY_MS);
+      const h = Math.floor((diff % DAY_MS) / (60 * 60 * 1000));
+      const m = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
+      const s = Math.floor((diff % (60 * 1000)) / 1000);
+      const prefix = mode === "ends" ? "Ends in " : "In ";
+      chip.textContent = `${prefix}${d}d ${h}h ${m}m ${s}s`;
+    }
+
+    function start() {
+      if (intervalId) return;
+      chip.classList.add("card__status--live");
+      tick();
+      intervalId = setInterval(tick, 1000);
+      activeChipTimers.push(intervalId);
+    }
+
+    function stop() {
+      clearInterval(intervalId);
+      intervalId = null;
+      chip.classList.remove("card__status--live");
+      chip.textContent = original;
+    }
+
+    chip.addEventListener("mouseenter", start);
+    chip.addEventListener("mouseleave", stop);
+    chip.addEventListener("focus", start);
+    chip.addEventListener("blur", stop);
+  });
 }
 
 /* =========================================================

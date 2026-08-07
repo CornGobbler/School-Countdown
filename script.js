@@ -102,6 +102,39 @@ const parsedEvents = EVENTS.map((e) => ({
 const yearStart = parsedEvents[0].start;
 const yearEnd = parsedEvents[parsedEvents.length - 1].end;
 
+// Every calendar date (as "YYYY-MM-DD") that is NOT a school day: weekends handled
+// separately, this set covers holidays, non-student days, and recesses. The first/last
+// day "milestone" events are real school days, so they're deliberately left out of this.
+const offDaySet = new Set();
+parsedEvents.forEach((ev) => {
+  if (ev.category === "milestone") return;
+  let d = new Date(ev.start);
+  while (d <= ev.end) {
+    offDaySet.add(d.toDateString());
+    d = addDays(d, 1);
+  }
+});
+
+function isSchoolDay(d) {
+  const wd = d.getDay();
+  if (wd === 0 || wd === 6) return false;
+  if (d < yearStart || d > yearEnd) return false;
+  return !offDaySet.has(d.toDateString());
+}
+
+// Real instructional days between two dates, inclusive — weekends and any
+// holiday/non-student/recess day (per offDaySet) don't count.
+function countSchoolDays(a, b) {
+  if (a > b) return 0;
+  let count = 0;
+  let d = new Date(a);
+  while (d <= b) {
+    if (isSchoolDay(d)) count++;
+    d = addDays(d, 1);
+  }
+  return count;
+}
+
 /* =========================================================
    STATUS + PROGRESS
 ========================================================= */
@@ -190,7 +223,9 @@ function buildDetails(now, ev, status) {
   }
 
   if (status === "upcoming") {
-    const schoolDaysAway = countWeekdays(addDays(startOfDay(now), 1), ev.start);
+    // Real school days you'll actually attend before this day arrives —
+    // the event's own day(s) don't count, since you haven't lived them yet.
+    const schoolDaysAway = countSchoolDays(addDays(startOfDay(now), 1), addDays(ev.start, -1));
     lines.push(`${schoolDaysAway} school day${schoolDaysAway === 1 ? "" : "s"} from today.`);
   } else if (status === "ongoing") {
     const daysLeft = Math.ceil((ev.end - now) / DAY_MS);

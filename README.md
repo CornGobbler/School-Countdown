@@ -1,4 +1,4 @@
-# 📌 School Year Countdown
+# School Year Countdown
 
 A live countdown for important dates across Garden Grove Unified School District (GGUSD) in Orange County, CA — covering key events and details for every school in the district, not just one campus.
 
@@ -8,7 +8,7 @@ Built with [Claude AI](https://claude.ai). Calendar dates sourced from the offic
 
 ![status](https://img.shields.io/badge/status-active-brightgreen) ![no build step](https://img.shields.io/badge/build-none%20needed-blue)
 
-## ✨ Features
+## Features
 
 - **Live hero countdown** — real-time days/hours/minutes/seconds ticking down to the next event
 - **Sticky-note metrics** — days until/since the start, total school days, % of the year completed, events left, weeks left, and a "long weekends" fun-fact counter, all computed automatically from today's date
@@ -18,7 +18,7 @@ Built with [Claude AI](https://claude.ai). Calendar dates sourced from the offic
 - **Day/night mode** — toggle in the bottom-right corner, remembers your choice on repeat visits
 - **Fully responsive** — collapses gracefully from a 4-column desktop layout down to a single column on phones
 
-## 🚀 Getting started
+## Getting started
 
 No build step, no dependencies to install. Just open `index.html` in a browser, or serve the folder with anything static:
 
@@ -55,7 +55,7 @@ const TOTAL_SCHOOL_DAYS = 180; // update to match your district's official count
 
 Single-day events just need `date`; multi-day ranges (recesses) also need `endDate`.
 
-## 📁 File structure
+## File structure
 
 ```
 .
@@ -64,11 +64,11 @@ Single-day events just need `date`; multi-day ranges (recesses) also need `endDa
 └── script.js    # event data, date math, and all rendering/interactivity
 ```
 
-## 🧰 Built with
+## Built with
 
 Plain HTML, CSS, and vanilla JavaScript — no frameworks or build tools. Fonts via [Google Fonts](https://fonts.google.com) (Caveat, Nunito, JetBrains Mono).
 
-## 🙏 Credits
+## Credits
 
 - Built with [Claude AI](https://claude.ai)
 - Calendar dates from the official [GGUSD school calendar](https://www.ggusd.us/schools/calendar)

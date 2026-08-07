@@ -252,9 +252,9 @@ function renderCards(now) {
       let statusText;
       if (status === "upcoming") {
         const days = Math.ceil((ev.start - now) / DAY_MS);
-        statusText = days <= 1 ? "Tomorrow!" : `In ${days} days`;
+        statusText = days <= 1 ? "\u23F3 Tomorrow!" : `\u23F3 In ${days} days`;
       } else if (status === "ongoing") {
-        statusText = "Happening now!";
+        statusText = "\u23F3 Happening now!";
       } else {
         statusText = "Finished!";
       }
@@ -312,7 +312,7 @@ function attachChipCountdowns() {
       const m = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
       const s = Math.floor((diff % (60 * 1000)) / 1000);
       const prefix = mode === "ends" ? "Ends in " : "In ";
-      chip.textContent = `${prefix}${d}d ${h}h ${m}m ${s}s`;
+      chip.textContent = `\u23F3 ${prefix}${d}d ${h}h ${m}m ${s}s`;
     }
 
     function start() {

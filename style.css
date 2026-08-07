@@ -310,6 +310,16 @@ html[data-theme="dark"] .board__footer{ color: rgba(253, 248, 236, 0.55); }
 
 .hero--done .hero__title{ color: var(--teal-dark); }
 
+.grid-hint{
+  max-width: 1200px;
+  margin: 0 auto 18px;
+  text-align: center;
+  font-family: var(--font-hand);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: rgba(253, 248, 236, 0.8);
+}
+
 /* =========================================================
    EVENT GRID + CARDS
 ========================================================= */
@@ -384,8 +394,11 @@ html[data-theme="dark"] .board__footer{ color: rgba(253, 248, 236, 0.55); }
   border-radius: 20px;
 }
 .card__status[data-live="true"]{
-  cursor: default;
+  cursor: help;
+  border-bottom: 1px dashed currentColor;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  animation: chipPulse 1s ease-in-out 2;
+  animation-delay: 0.9s;
 }
 .card__status[data-live="true"]:hover,
 .card__status[data-live="true"]:focus-visible{
@@ -398,6 +411,12 @@ html[data-theme="dark"] .board__footer{ color: rgba(253, 248, 236, 0.55); }
   letter-spacing: 0;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+  border-bottom-style: solid;
+}
+
+@keyframes chipPulse{
+  0%, 100%{ transform: scale(1); }
+  50%{ transform: scale(1.08); }
 }
 
 .card__bar{
@@ -551,4 +570,5 @@ html[data-theme="dark"] .theme-toggle{
   .card--ongoing{ animation: none !important; }
   .card__bar-fill{ transition: none !important; }
   .metric:hover, .card:hover{ transform: none !important; }
+  .card__status[data-live="true"]{ animation: none !important; }
 }

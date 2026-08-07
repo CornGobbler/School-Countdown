@@ -39,6 +39,15 @@
   --shadow-card-hover: 0 18px 30px -10px rgba(30, 18, 6, 0.55);
 }
 
+/* Night mode overrides — same corkboard, the lights are just off */
+html[data-theme="dark"]{
+  --cork:        #2b2219;
+  --cork-mid:    #201911;
+  --cork-dark:   #15100a;
+  --frame:       #1c130b;
+  --frame-dark:  #0c0805;
+}
+
 *, *::before, *::after{ box-sizing: border-box; }
 
 html, body{
@@ -50,7 +59,25 @@ body{
   font-family: var(--font-body);
   color: var(--ink);
   background: var(--cork);
+  transition: background-color 0.4s ease;
 }
+
+.board, .header, .metric, .hero, .card{
+  transition: background-color 0.4s ease, border-color 0.4s ease, filter 0.4s ease,
+    transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+html[data-theme="dark"] .metric{ filter: brightness(0.8) saturate(0.85); }
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .hero,
+html[data-theme="dark"] .header{ filter: brightness(0.93); }
+html[data-theme="dark"] .board{
+  box-shadow: inset 0 0 0 4px rgba(0,0,0,0.45), inset 0 2px 34px rgba(0,0,0,0.7);
+}
+html[data-theme="dark"] .pin{
+  box-shadow: 0 0 9px 2px rgba(255,244,214,0.18), 0 3px 5px rgba(0,0,0,0.6);
+}
+html[data-theme="dark"] .board__footer{ color: rgba(253, 248, 236, 0.55); }
 
 :focus-visible{
   outline: 3px solid #2b6cb0;
@@ -396,6 +423,62 @@ body{
 .card:nth-child(6n+6){ transform: rotate(1.8deg); }
 
 /* =========================================================
+   CARD HOVER DETAILS
+========================================================= */
+.card__details{
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  margin-top: 0;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.74rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  border-top: 1px dashed var(--card-line);
+  padding-top: 0;
+  transition: max-height 0.35s ease, opacity 0.3s ease, margin-top 0.35s ease, padding-top 0.35s ease;
+}
+.card:hover .card__details,
+.card:focus-within .card__details{
+  max-height: 90px;
+  opacity: 1;
+  margin-top: 12px;
+  padding-top: 8px;
+}
+.card__details span{ display: block; }
+
+/* =========================================================
+   THEME TOGGLE
+========================================================= */
+.theme-toggle{
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 3px solid var(--frame-dark);
+  background: radial-gradient(circle at 35% 30%, #f2c667, var(--gold) 55%, var(--gold-dark) 100%);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.45);
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.4s ease;
+  z-index: 50;
+}
+.theme-toggle:hover{ transform: translateY(-3px) scale(1.06); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+.theme-toggle:active{ transform: translateY(0) scale(0.95); }
+
+html[data-theme="dark"] .theme-toggle{
+  background: radial-gradient(circle at 35% 30%, #7d8ba8, var(--slate) 55%, var(--slate-dark) 100%);
+  border-color: #0c0805;
+}
+
+/* =========================================================
    FOOTER
 ========================================================= */
 .board__footer{
@@ -439,6 +522,9 @@ body{
 }
 @media (max-width: 380px){
   .board__grid{ grid-template-columns: 1fr; }
+}
+@media (max-width: 480px){
+  .theme-toggle{ width: 46px; height: 46px; font-size: 1.2rem; right: 14px; bottom: 14px; }
 }
 
 /* =========================================================

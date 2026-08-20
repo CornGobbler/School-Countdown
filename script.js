@@ -165,7 +165,7 @@ function renderMetrics(now) {
   let completedPct;
   if (todayStart < yearStart) completedPct = 0;
   else if (todayStart > yearEnd) completedPct = 100;
-  else completedPct = Math.round(((todayStart - yearStart) / totalSpanDays) * 100);
+  else completedPct = Math.round(((todayStart - yearStart) / DAY_MS / totalSpanDays) * 100);
 
   const eventsLeft = parsedEvents.filter((e) => getStatus(todayStart, e) !== "done").length;
   const nextEvent = parsedEvents.find((e) => getStatus(todayStart, e) !== "done");

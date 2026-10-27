@@ -1,0 +1,145 @@
+/* =========================================================
+   AUTUMN THEME  (loads after style.css)
+   Only applies when <html data-season="fall"> — set in index.html
+   for Sep–Nov. Any other time of year the site looks like before.
+   Preview any time with  index.html?season=fall
+========================================================= */
+html[data-season="fall"]{
+  --cork:        #b8794a;
+  --cork-mid:    #a2663b;
+  --cork-dark:   #7a4627;
+  --frame:       #5e3a20;
+  --frame-dark:  #3d2312;
+
+  --card:        #fff3dc;
+  --card-line:   #e3cfa4;
+  --card-margin: #c9644a;
+
+  --ink:         #3a2616;
+  --ink-soft:    #86684a;
+
+  --red:         #b5402a;   /* brick maple   */
+  --red-dark:    #8c2e1d;
+  --teal:        #66803a;   /* moss, for recesses */
+  --teal-dark:   #4a5e28;
+  --gold:        #e08a1e;   /* pumpkin       */
+  --gold-dark:   #a85f0c;
+  --slate:       #78604c;   /* bark          */
+  --slate-dark:  #55422f;
+
+  --paper-yellow:#f2c35c;
+  --paper-pink:  #eda48a;
+  --paper-blue:  #c9d49a;
+  --paper-green: #e8b36e;
+  --paper-lilac: #d3a7b8;
+}
+
+/* Night mode: a dark porch with the lamp still on */
+html[data-season="fall"][data-theme="dark"]{
+  --cork:        #2e2016;
+  --cork-mid:    #22170e;
+  --cork-dark:   #160e07;
+  --frame:       #1c130b;
+  --frame-dark:  #0c0805;
+}
+
+/* ---------- Warm light across the board ---------- */
+html[data-season="fall"] .board::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 70% 45% at 12% 0%, rgba(255,176,80,0.42), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(110,28,10,0.38), transparent 70%);
+}
+html[data-season="fall"][data-theme="dark"] .board::before{
+  background:
+    radial-gradient(ellipse 55% 40% at 50% 0%, rgba(255,150,50,0.16), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(0,0,0,0.5), transparent 70%);
+}
+html[data-season="fall"] .board > *{ position: relative; z-index: 1; }
+html[data-season="fall"] .board{ padding-bottom: 110px; }
+
+/* ---------- Header + hero get a little extra life ---------- */
+html[data-season="fall"] .header__title{ color: var(--red-dark); }
+html[data-season="fall"] .hero{ cursor: pointer; }
+html[data-season="fall"] .hero__eyebrow{ color: var(--red); }
+html[data-season="fall"] .clock__num{ color: var(--gold-dark); }
+
+/* ---------- Falling leaves ---------- */
+.leaf-field{ display: none; }
+html[data-season="fall"] .leaf-field{
+  display: block;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 30;
+}
+html[data-season="fall"][data-theme="dark"] .leaf-field{ opacity: 0.6; }
+
+.leaf{
+  position: absolute;
+  top: 0;
+  left: var(--x);
+  width: var(--size);
+  height: var(--size);
+  will-change: transform;
+  animation: leaf-fall var(--dur) linear var(--delay) infinite;
+}
+.leaf svg{
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 2px rgba(40,18,4,0.3));
+  animation: leaf-sway var(--sway) ease-in-out var(--delay) infinite alternate;
+}
+@keyframes leaf-fall{
+  from{ transform: translate3d(0, -14vh, 0) rotate(0deg); }
+  to{   transform: translate3d(var(--drift), 114vh, 0) rotate(var(--spin)); }
+}
+@keyframes leaf-sway{
+  from{ transform: translateX(-20px) rotate(-28deg); }
+  to{   transform: translateX(20px)  rotate(28deg); }
+}
+
+/* Burst leaves (spawned when you click the hero) */
+.leaf--burst{
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--size);
+  height: var(--size);
+  pointer-events: none;
+  z-index: 40;
+}
+.leaf--burst svg{ display: block; width: 100%; height: 100%; filter: drop-shadow(0 2px 2px rgba(40,18,4,0.3)); }
+
+/* ---------- Leaf pile at the foot of the board ---------- */
+.leaf-pile{ display: none; }
+html[data-season="fall"] .board > .leaf-pile{
+  display: block;
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 96px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+.leaf-pile__leaf{
+  position: absolute;
+  bottom: var(--b);
+  left: var(--l);
+  width: var(--size);
+  height: var(--size);
+  transform: rotate(var(--r));
+}
+.leaf-pile__leaf svg{ display: block; width: 100%; height: 100%; filter: drop-shadow(0 -1px 2px rgba(40,18,4,0.3)); }
+html[data-season="fall"][data-theme="dark"] .leaf-pile{ opacity: 0.7; }
+
+/* ---------- Reduced motion: keep the scenery, drop the movement ---------- */
+@media (prefers-reduced-motion: reduce){
+  html[data-season="fall"] .leaf-field{ display: none; }
+  html[data-season="fall"] .hero{ cursor: default; }
+}

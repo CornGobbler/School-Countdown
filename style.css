@@ -1,574 +1,92 @@
 /* =========================================================
-   TOKENS
+   POLISH  (loads after style.css and autumn.css)
+   Works in every season.
 ========================================================= */
-:root{
-  --cork:        #c08a52;
-  --cork-mid:    #ad7943;
-  --cork-dark:   #8a5f34;
-  --frame:       #6b4527;
-  --frame-dark:  #4a2f1a;
 
-  --card:        #fdf8ec;
-  --card-line:   #d8c9a3;
-  --card-margin: #d98a7c;
-
-  --ink:         #352a1c;
-  --ink-soft:    #7a6a52;
-
-  --red:         #c0453a;
-  --red-dark:    #9c372e;
-  --teal:        #2f8f82;
-  --teal-dark:   #226a60;
-  --gold:        #d99a2b;
-  --gold-dark:   #a6741c;
-  --slate:       #6b7280;
-  --slate-dark:  #4b5259;
-
-  --paper-yellow:#f6e08a;
-  --paper-pink:  #f3b8c4;
-  --paper-blue:  #a9d2e0;
-  --paper-green: #b7d99b;
-  --paper-lilac: #cdb8e6;
-
-  --font-hand:  'Caveat', cursive;
-  --font-body:  'Nunito', system-ui, sans-serif;
-  --font-mono:  'JetBrains Mono', ui-monospace, monospace;
-
-  --radius: 10px;
-  --shadow-card: 0 10px 18px -8px rgba(30, 18, 6, 0.45);
-  --shadow-card-hover: 0 18px 30px -10px rgba(30, 18, 6, 0.55);
-}
-
-/* Night mode overrides — same corkboard, the lights are just off */
-html[data-theme="dark"]{
-  --cork:        #2b2219;
-  --cork-mid:    #201911;
-  --cork-dark:   #15100a;
-  --frame:       #1c130b;
-  --frame-dark:  #0c0805;
-}
-
-*, *::before, *::after{ box-sizing: border-box; }
-
-html, body{
-  margin: 0;
-  min-height: 100%;
-}
-
-body{
-  font-family: var(--font-body);
-  color: var(--ink);
-  background: var(--cork);
-  transition: background-color 0.4s ease;
-}
-
-.board, .header, .metric, .hero, .card{
-  transition: background-color 0.4s ease, border-color 0.4s ease, filter 0.4s ease,
-    transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-html[data-theme="dark"] .metric{ filter: brightness(0.8) saturate(0.85); }
-html[data-theme="dark"] .card,
-html[data-theme="dark"] .hero,
-html[data-theme="dark"] .header{ filter: brightness(0.93); }
-html[data-theme="dark"] .board{
-  box-shadow: inset 0 0 0 4px rgba(0,0,0,0.45), inset 0 2px 34px rgba(0,0,0,0.7);
-}
-html[data-theme="dark"] .pin{
-  box-shadow: 0 0 9px 2px rgba(255,244,214,0.18), 0 3px 5px rgba(0,0,0,0.6);
-}
-html[data-theme="dark"] .board__footer{ color: rgba(253, 248, 236, 0.55); }
-
-:focus-visible{
-  outline: 3px solid #2b6cb0;
-  outline-offset: 3px;
-  border-radius: 4px;
-}
-
-/* =========================================================
-   CORKBOARD SURFACE + WOOD FRAME
-========================================================= */
-.board{
-  position: relative;
-  min-height: 100vh;
-  padding: 48px clamp(16px, 5vw, 64px) 40px;
-
-  background-color: var(--cork);
-  background-image:
-    radial-gradient(circle at 12% 18%, rgba(255,255,255,0.10) 0, transparent 3%),
-    radial-gradient(circle at 82% 8%, rgba(0,0,0,0.10) 0, transparent 4%),
-    radial-gradient(circle at 34% 62%, rgba(0,0,0,0.08) 0, transparent 3%),
-    radial-gradient(circle at 68% 74%, rgba(255,255,255,0.08) 0, transparent 3%),
-    radial-gradient(circle at 92% 52%, rgba(0,0,0,0.09) 0, transparent 3%),
-    radial-gradient(circle at 6% 82%, rgba(0,0,0,0.09) 0, transparent 3%),
-    repeating-radial-gradient(circle at 20% 20%, rgba(0,0,0,0.05) 0 2px, transparent 2px 5px),
-    linear-gradient(135deg, var(--cork) 0%, var(--cork-mid) 55%, var(--cork-dark) 100%);
-  background-size: 140px 140px, 160px 160px, 130px 130px, 150px 150px, 170px 170px, 140px 140px, 6px 6px, cover;
-
-  border: 14px solid var(--frame);
-  border-image: linear-gradient(155deg, #8a5b34, var(--frame) 35%, var(--frame-dark) 100%) 1;
-  box-shadow: inset 0 0 0 4px rgba(0,0,0,0.18), inset 0 2px 22px rgba(0,0,0,0.35);
-}
-
-/* =========================================================
-   PINS  (shared)
-========================================================= */
-.pin{
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  position: relative;
-  box-shadow: 0 3px 5px rgba(0,0,0,0.45);
-}
-.pin::after{
-  content:"";
-  position: absolute;
-  top: 3px; left: 3px;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.75);
-  filter: blur(0.3px);
-}
-.pin--red{  background: radial-gradient(circle at 35% 30%, #ea6f5f, var(--red) 60%, var(--red-dark) 100%); }
-.pin--gold{ background: radial-gradient(circle at 35% 30%, #f2c667, var(--gold) 60%, var(--gold-dark) 100%); }
-.pin--teal{ background: radial-gradient(circle at 35% 30%, #5cbcae, var(--teal) 60%, var(--teal-dark) 100%); }
-.pin--slate{background: radial-gradient(circle at 35% 30%, #98a2ad, var(--slate) 60%, var(--slate-dark) 100%); }
-
-/* =========================================================
-   HEADER  — torn paper banner
-========================================================= */
-.header{
-  position: relative;
-  max-width: 720px;
-  margin: 0 auto 34px;
-  padding: 22px 34px 26px;
-  text-align: center;
-  background: var(--card);
-  transform: rotate(-1.2deg);
-  clip-path: polygon(
-    0% 4%, 3% 0%, 9% 3%, 16% 0%, 24% 2%, 31% 0%, 40% 3%, 48% 0%,
-    56% 2%, 64% 0%, 73% 3%, 81% 0%, 90% 2%, 97% 0%, 100% 5%,
-    99% 30%, 100% 55%, 98% 78%, 100% 96%, 92% 100%, 84% 97%,
-    76% 100%, 67% 98%, 58% 100%, 49% 97%, 41% 100%, 32% 98%,
-    23% 100%, 14% 97%, 6% 100%, 0% 95%, 2% 70%, 0% 45%, 1% 22%
-  );
-  box-shadow: var(--shadow-card);
-  animation: settle 0.6s ease-out both;
-}
-.header__pin{ position: absolute; top: -9px; }
-.header__pin--left{ left: 14%; }
-.header__pin--right{ right: 14%; }
-
-.header__title{
-  margin: 6px 0 4px;
-  font-family: var(--font-hand);
-  font-weight: 700;
-  font-size: clamp(2.2rem, 6vw, 3.4rem);
-  color: var(--ink);
-  line-height: 1;
-}
-.header__subtitle{
-  margin: 0;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: var(--ink-soft);
-  letter-spacing: 0.2px;
-}
-
-/* =========================================================
-   METRICS  — sticky notes
-========================================================= */
-.metrics{
-  max-width: 1100px;
-  margin: 0 auto 30px;
+/* ---------- Category legend / filter ---------- */
+.legend{
+  max-width: 1200px;
+  margin: 0 auto 28px;
   display: flex;
   flex-wrap: wrap;
-  gap: 18px;
   justify-content: center;
+  gap: 10px 12px;
 }
-
-.metric{
-  position: relative;
-  width: 168px;
-  padding: 18px 14px 14px;
-  font-family: var(--font-body);
-  text-align: center;
-  box-shadow: 0 8px 14px -6px rgba(20,12,4,0.4);
-  animation: settle 0.6s ease-out both;
-}
-.metric::before{
-  content:"";
-  position: absolute;
-  top: -9px; left: 50%;
-  transform: translateX(-50%) rotate(45deg);
-  width: 20px; height: 10px;
-  background: rgba(255,255,255,0.55);
-  border: 1px solid rgba(255,255,255,0.7);
-}
-.metric:nth-child(5n+1){ background: var(--paper-yellow); transform: rotate(-3deg); }
-.metric:nth-child(5n+2){ background: var(--paper-pink);   transform: rotate(2.5deg); }
-.metric:nth-child(5n+3){ background: var(--paper-blue);   transform: rotate(-2deg); }
-.metric:nth-child(5n+4){ background: var(--paper-green);  transform: rotate(3deg); }
-.metric:nth-child(5n+5){ background: var(--paper-lilac);  transform: rotate(-2.5deg); }
-
-.metric:hover{ transform: rotate(0deg) translateY(-3px) scale(1.03); }
-
-.metric__value{
-  display: block;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 1.5rem;
-  color: var(--ink);
-}
-.metric__label{
-  display: block;
-  margin-top: 4px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--ink-soft);
-}
-
-/* =========================================================
-   HERO — live countdown card
-========================================================= */
-.hero{
-  position: relative;
-  max-width: 560px;
-  margin: 0 auto 46px;
-  padding: 30px clamp(20px, 5vw, 46px) 34px;
-  text-align: center;
-  background: var(--card);
-  background-image: repeating-linear-gradient(
-    to bottom, transparent 0 37px, var(--card-line) 37px 38px
-  );
-  border-radius: 4px;
-  border-left: 3px solid var(--card-margin);
-  box-shadow: var(--shadow-card);
-  transform: rotate(0.6deg);
-  animation: settle 0.7s ease-out both;
-  animation-delay: 0.05s;
-}
-.hero__pin{ position: absolute; top: -9px; left: 50%; transform: translateX(-50%); }
-
-.hero__eyebrow{
-  margin: 4px 0 2px;
-  font-family: var(--font-body);
-  font-weight: 800;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--gold-dark);
-}
-.hero__title{
-  margin: 2px 0 2px;
-  font-family: var(--font-hand);
-  font-weight: 700;
-  font-size: clamp(2rem, 6vw, 2.8rem);
-  color: var(--ink);
-  line-height: 1.05;
-}
-.hero__date{
-  margin: 0 0 20px;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--ink-soft);
-}
-
-.hero__clock{
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.clock__unit{ display: flex; flex-direction: column; align-items: center; min-width: 58px; }
-.clock__num{
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: clamp(1.6rem, 6vw, 2.3rem);
-  color: var(--red-dark);
-  font-variant-numeric: tabular-nums;
-}
-.clock__label{
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--ink-soft);
-}
-.clock__colon{
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: clamp(1.4rem, 5vw, 2rem);
-  color: var(--card-line);
-  transform: translateY(-6px);
-}
-
-.hero--done .hero__title{ color: var(--teal-dark); }
-
-.grid-hint{
-  max-width: 1200px;
-  margin: 0 auto 18px;
-  text-align: center;
-  font-family: var(--font-hand);
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: rgba(253, 248, 236, 0.8);
-}
-
-/* =========================================================
-   EVENT GRID + CARDS
-========================================================= */
-.board__grid{
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 34px 26px;
-  padding-top: 6px;
-}
-
-.card{
-  position: relative;
-  background: var(--card);
-  background-image: repeating-linear-gradient(
-    to bottom, transparent 0 27px, var(--card-line) 27px 28px
-  );
-  border-left: 3px solid var(--card-margin);
-  border-radius: 4px;
-  padding: 26px 18px 18px;
-  box-shadow: var(--shadow-card);
-  opacity: 0;
-  animation: settle 0.55s ease-out forwards;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-.card:hover,
-.card:focus-within{
-  transform: rotate(0deg) translateY(-5px) scale(1.03) !important;
-  box-shadow: var(--shadow-card-hover);
-  z-index: 5;
-}
-
-.card__pin{ position: absolute; top: -9px; left: 50%; transform: translateX(-50%); }
-
-.card__tape{
-  position: absolute;
-  top: -10px; right: 10px;
-  width: 52px; height: 22px;
-  background: repeating-linear-gradient(
-    45deg, rgba(255,255,255,0.75) 0 6px, rgba(230,230,230,0.55) 6px 12px
-  );
-  opacity: 0.8;
-  transform: rotate(6deg);
-  box-shadow: 0 2px 3px rgba(0,0,0,0.15);
-}
-
-.card__title{
-  margin: 6px 0 2px;
-  font-family: var(--font-hand);
-  font-weight: 700;
-  font-size: 1.55rem;
-  color: var(--ink);
-  line-height: 1.05;
-}
-.card__date{
-  margin: 0 0 14px;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--ink-soft);
-}
-
-.card__status{
-  display: inline-block;
-  margin-bottom: 12px;
-  font-family: var(--font-body);
-  font-weight: 800;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 3px 9px;
-  border-radius: 20px;
-}
-.card__status[data-live="true"]{
-  cursor: help;
-  border-bottom: 1px dashed currentColor;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  animation: chipPulse 1s ease-in-out 2;
-  animation-delay: 0.9s;
-}
-.card__status[data-live="true"]:hover,
-.card__status[data-live="true"]:focus-visible{
-  transform: scale(1.05);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
-}
-.card__status--live{
-  font-family: var(--font-mono);
-  text-transform: none;
-  letter-spacing: 0;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-  border-bottom-style: solid;
-}
-
-@keyframes chipPulse{
-  0%, 100%{ transform: scale(1); }
-  50%{ transform: scale(1.08); }
-}
-
-.card__bar{
-  height: 8px;
-  border-radius: 6px;
-  background: rgba(0,0,0,0.08);
-  overflow: hidden;
-}
-.card__bar-fill{
-  height: 100%;
-  border-radius: 6px;
-  width: 0%;
-  transition: width 1s ease;
-  background: repeating-linear-gradient(
-    45deg, rgba(255,255,255,0.28) 0 6px, transparent 6px 12px
-  ), linear-gradient(90deg, var(--gold), var(--red));
-}
-
-/* status variants */
-.card--upcoming .card__status{ background: rgba(217,154,43,0.18); color: var(--gold-dark); }
-.card--upcoming .card__bar-fill{ background-image: none; background-color: var(--gold); }
-
-.card--ongoing{ animation: settle 0.55s ease-out forwards, glow 2.2s ease-in-out infinite; }
-.card--ongoing .card__status{ background: rgba(47,143,130,0.18); color: var(--teal-dark); }
-.card--ongoing .card__bar-fill{ background-image: none; background-color: var(--teal); }
-
-.card--done{ opacity: 0.85 !important; }
-.card--done .card__title, .card--done .card__date{ color: var(--ink-soft); }
-.card--done .card__status{ background: rgba(107,114,128,0.16); color: var(--slate-dark); }
-.card--done .card__bar-fill{ background-image: none; background-color: var(--slate); width: 100% !important; }
-.card--done .card__pin{ filter: grayscale(0.35); }
-
-/* subtle handmade rotation per card position */
-.card:nth-child(6n+1){ transform: rotate(-2deg); }
-.card:nth-child(6n+2){ transform: rotate(1.4deg); }
-.card:nth-child(6n+3){ transform: rotate(-1deg); }
-.card:nth-child(6n+4){ transform: rotate(2.2deg); }
-.card:nth-child(6n+5){ transform: rotate(-2.6deg); }
-.card:nth-child(6n+6){ transform: rotate(1.8deg); }
-
-/* =========================================================
-   CARD HOVER DETAILS
-========================================================= */
-.card__details{
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  margin-top: 0;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.74rem;
-  line-height: 1.55;
-  color: var(--ink-soft);
-  border-top: 1px dashed var(--card-line);
-  padding-top: 0;
-  transition: max-height 0.35s ease, opacity 0.3s ease, margin-top 0.35s ease, padding-top 0.35s ease;
-}
-.card:hover .card__details,
-.card:focus-within .card__details{
-  max-height: 90px;
-  opacity: 1;
-  margin-top: 12px;
-  padding-top: 8px;
-}
-.card__details span{ display: block; }
-
-/* =========================================================
-   THEME TOGGLE
-========================================================= */
-.theme-toggle{
-  position: fixed;
-  right: 22px;
-  bottom: 22px;
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  border: 3px solid var(--frame-dark);
-  background: radial-gradient(circle at 35% 30%, #f2c667, var(--gold) 55%, var(--gold-dark) 100%);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.45);
-  cursor: pointer;
-  font-size: 1.4rem;
-  line-height: 1;
-  display: flex;
+.legend__btn{
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.4s ease;
-  z-index: 50;
+  gap: 8px;
+  padding: 7px 16px 7px 12px;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 0.74rem;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--card);
+  border: 2px dashed var(--card-line);
+  border-radius: 999px;
+  box-shadow: 0 5px 9px -5px rgba(20,12,4,0.5);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
-.theme-toggle:hover{ transform: translateY(-3px) scale(1.06); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-.theme-toggle:active{ transform: translateY(0) scale(0.95); }
+.legend__btn:nth-child(odd){ transform: rotate(-1.5deg); }
+.legend__btn:nth-child(even){ transform: rotate(1.2deg); }
+.legend__btn:hover{ transform: rotate(0deg) translateY(-2px); }
+.legend__btn[aria-pressed="true"]{
+  background: var(--ink);
+  color: var(--card);
+  border-style: solid;
+  border-color: var(--ink);
+}
+.legend__btn .pin{ width: 12px; height: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+.legend__btn .pin::after{ top: 2px; left: 2px; width: 4px; height: 4px; }
 
-html[data-theme="dark"] .theme-toggle{
-  background: radial-gradient(circle at 35% 30%, #7d8ba8, var(--slate) 55%, var(--slate-dark) 100%);
-  border-color: #0c0805;
-}
+.card[hidden]{ display: none; }
 
-/* =========================================================
-   FOOTER
-========================================================= */
-.board__footer{
-  position: relative;
-  max-width: 1200px;
-  margin: 46px auto 0;
-  text-align: center;
-  font-family: var(--font-hand);
-  font-size: 1.15rem;
-  color: rgba(253, 248, 236, 0.85);
-}
+/* ---------- Cards that already appeared don't re-animate every minute ---------- */
+.card--static{ animation: none; opacity: 1; }
+.card--ongoing.card--static{ animation: glow 2.2s ease-in-out infinite; }
 
-/* =========================================================
-   ANIMATION
-========================================================= */
-@keyframes settle{
-  from{ opacity: 0; transform: translateY(14px) rotate(0deg) scale(0.97); }
-  to{ opacity: 1; }
-}
-@keyframes glow{
-  0%, 100%{ box-shadow: var(--shadow-card); }
-  50%{ box-shadow: 0 10px 22px -6px rgba(47,143,130,0.55); }
-}
-
-/* stagger the cards a bit */
-.board__grid .card:nth-child(1){ animation-delay: 0.02s; }
-.board__grid .card:nth-child(2){ animation-delay: 0.06s; }
-.board__grid .card:nth-child(3){ animation-delay: 0.10s; }
-.board__grid .card:nth-child(4){ animation-delay: 0.14s; }
-.board__grid .card:nth-child(5){ animation-delay: 0.18s; }
-.board__grid .card:nth-child(6){ animation-delay: 0.22s; }
-.board__grid .card:nth-child(n+7){ animation-delay: 0.26s; }
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-@media (max-width: 560px){
-  .board{ padding: 34px 14px 30px; border-width: 9px; }
-  .metric{ width: 140px; }
-  .board__grid{ grid-template-columns: 1fr 1fr; gap: 26px 16px; }
-}
-@media (max-width: 380px){
-  .board__grid{ grid-template-columns: 1fr; }
-}
-@media (max-width: 480px){
-  .theme-toggle{ width: 46px; height: 46px; font-size: 1.2rem; right: 14px; bottom: 14px; }
+/* ---------- "Next up" ribbon ---------- */
+.card--next::after{
+  content: "NEXT UP";
+  position: absolute;
+  right: 12px;
+  bottom: -11px;
+  padding: 3px 11px;
+  font-family: var(--font-body);
+  font-weight: 900;
+  font-size: 0.62rem;
+  letter-spacing: 1.6px;
+  color: #fff;
+  background: var(--red);
+  border-radius: 3px;
+  transform: rotate(-3deg);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
 }
 
-/* =========================================================
-   REDUCED MOTION
-========================================================= */
+/* ---------- Hero clock: paper tiles, digit pop, blinking colons ---------- */
+.clock__unit{
+  padding: 8px 6px 6px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid var(--card-line);
+  border-radius: 8px;
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.05), 0 3px 6px -3px rgba(40,24,8,0.3);
+}
+.clock__num.pop{ animation: digit-pop 0.35s ease-out; }
+.clock__colon{ animation: colon-blink 2s steps(1, end) infinite; }
+
+@keyframes digit-pop{
+  0%{   transform: translateY(-5px) scale(1.12); opacity: 0.55; }
+  100%{ transform: none; opacity: 1; }
+}
+@keyframes colon-blink{
+  0%, 60%{ opacity: 1; }
+  61%, 100%{ opacity: 0.3; }
+}
+
 @media (prefers-reduced-motion: reduce){
-  .header, .metric, .hero, .card{ animation: none !important; opacity: 1 !important; }
-  .card--ongoing{ animation: none !important; }
-  .card__bar-fill{ transition: none !important; }
-  .metric:hover, .card:hover{ transform: none !important; }
-  .card__status[data-live="true"]{ animation: none !important; }
+  .clock__num.pop, .clock__colon{ animation: none !important; }
+  .legend__btn{ transition: none; }
 }

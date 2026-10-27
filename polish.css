@@ -1,0 +1,92 @@
+/* =========================================================
+   POLISH  (loads after style.css and autumn.css)
+   Works in every season.
+========================================================= */
+
+/* ---------- Category legend / filter ---------- */
+.legend{
+  max-width: 1200px;
+  margin: 0 auto 28px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 12px;
+}
+.legend__btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px 7px 12px;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 0.74rem;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--card);
+  border: 2px dashed var(--card-line);
+  border-radius: 999px;
+  box-shadow: 0 5px 9px -5px rgba(20,12,4,0.5);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.legend__btn:nth-child(odd){ transform: rotate(-1.5deg); }
+.legend__btn:nth-child(even){ transform: rotate(1.2deg); }
+.legend__btn:hover{ transform: rotate(0deg) translateY(-2px); }
+.legend__btn[aria-pressed="true"]{
+  background: var(--ink);
+  color: var(--card);
+  border-style: solid;
+  border-color: var(--ink);
+}
+.legend__btn .pin{ width: 12px; height: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+.legend__btn .pin::after{ top: 2px; left: 2px; width: 4px; height: 4px; }
+
+.card[hidden]{ display: none; }
+
+/* ---------- Cards that already appeared don't re-animate every minute ---------- */
+.card--static{ animation: none; opacity: 1; }
+.card--ongoing.card--static{ animation: glow 2.2s ease-in-out infinite; }
+
+/* ---------- "Next up" ribbon ---------- */
+.card--next::after{
+  content: "NEXT UP";
+  position: absolute;
+  right: 12px;
+  bottom: -11px;
+  padding: 3px 11px;
+  font-family: var(--font-body);
+  font-weight: 900;
+  font-size: 0.62rem;
+  letter-spacing: 1.6px;
+  color: #fff;
+  background: var(--red);
+  border-radius: 3px;
+  transform: rotate(-3deg);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+}
+
+/* ---------- Hero clock: paper tiles, digit pop, blinking colons ---------- */
+.clock__unit{
+  padding: 8px 6px 6px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid var(--card-line);
+  border-radius: 8px;
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.05), 0 3px 6px -3px rgba(40,24,8,0.3);
+}
+.clock__num.pop{ animation: digit-pop 0.35s ease-out; }
+.clock__colon{ animation: colon-blink 2s steps(1, end) infinite; }
+
+@keyframes digit-pop{
+  0%{   transform: translateY(-5px) scale(1.12); opacity: 0.55; }
+  100%{ transform: none; opacity: 1; }
+}
+@keyframes colon-blink{
+  0%, 60%{ opacity: 1; }
+  61%, 100%{ opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .clock__num.pop, .clock__colon{ animation: none !important; }
+  .legend__btn{ transition: none; }
+}
